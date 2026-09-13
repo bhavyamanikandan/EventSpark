@@ -1,36 +1,50 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
 
-import Navbar from "./components/Navbar.jsx";
-import Home from "./pages/Home.jsx";
-import Events from "./pages/Events.jsx";
-import Admin from "./pages/Admin.jsx";
+import Navbar from "./components/Navbar";
+
+import Home from "./pages/Home";
+import Events from "./pages/Events";
+import Admin from "./pages/Admin";
+import MyBookings from "./pages/MyBookings";
+
 
 function App() {
+  return (
+    <BrowserRouter>
 
-    return (
-        <BrowserRouter>
+      <Navbar />
 
-            <Navbar />
+      <Routes>
 
-            <Routes>
+        <Route
+          path="/"
+          element={<Home />}
+        />
 
-                <Route path="/" element={<Home />} />
+        <Route
+          path="/events"
+          element={<Events />}
+        />
 
-                <Route
-                    path="/events"
-                    element={<Events />}
-                />
+        <Route
+          path="/admin"
+          element={<Admin />}
+        />
 
-                <Route
-                    path="/admin"
-                    element={<Admin />}
-                />
+        <Route
+          path="/bookings"
+          element={<MyBookings />}
+        />
 
-            </Routes>
+      </Routes>
 
-        </BrowserRouter>
-    );
+    </BrowserRouter>
+  );
 }
 
 export default App;
