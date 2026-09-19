@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+const pool = require("./db");
+const db = require("./db");
 
 const app = express();
 
@@ -74,7 +76,87 @@ app.get("/api/events", (req, res) => {
 
     res.json(result);
 });
+// Register for an event
+app.post("/api/events/:id/register", async (req, res) => {
+    try {
+        const eventId = req.params.id;
+        const { name, email } = req.body;
 
-app.listen(PORT, () => {
-    console.log(`EventSpark backend running on http://localhost:${PORT}`);
+        if (!name || !email) {
+            return res.status(400).json({
+                message: "Name and email are required"
+            });
+        }
+
+        // Find event
+        const event = events.find(
+            (event) => String(event.id) === String(eventId)
+        );
+
+        if (!event) {
+            return res.status(404).json({
+                message: "Event not found"
+            });
+        }
+
+        // Check whether the attendee is already registered
+        const [existing] = await pool.execute(
+            `SELECT id FROM bookings
+             WHERE event_id = ?
+             AND attendee_email = ?
+             AND status != 'cancelled'`,
+            [eventId, email]
+        );
+
+        if (existing.length > 0) {
+            return res.status(400).json({
+                message: "You are already registered for this event"
+            });
+        }
+
+        // Determine booking status
+        const availableSeats = event.totalSeats - event.bookedSeats;
+
+        const status = availableSeats > 0
+            ? "confirmed"
+            : "waitlisted";
+
+        // Save booking in database
+        const [result] = await pool.execute(
+            `INSERT INTO bookings
+            (event_id, attendee_name, attendee_email, status)
+            VALUES (?, ?, ?, ?)`,
+            [eventId, name, email, status]
+        );
+
+        // Update in-memory seat count only when confirmed
+        if (status === "confirmed") {
+            event.bookedSeats++;
+        }
+
+        res.status(201).json({
+            success: true,
+            message:
+                status === "confirmed"
+                    ? "Registration successful"
+                    : "Event is full. You have been added to the waitlist.",
+            bookingId: result.insertId,
+            status: status
+        });
+
+    } catch (error) {
+        console.error("Registration error:", error);
+
+        res.status(500).json({
+            message: "Registration failed",
+            error: error.message
+        });
+    }
 });
+if (require.main === module) {
+    app.listen(5000, () => {
+        console.log("EventSpark backend running on http://localhost:5000");
+    });
+}
+
+module.exports = app;
