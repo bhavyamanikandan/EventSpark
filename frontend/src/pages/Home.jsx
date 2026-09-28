@@ -240,8 +240,8 @@ function Home() {
                 <p className="section-label">WHY EVENTSPARK?</p>
 
                 <h2>
-                    Everything you need for
-                    <span> unforgettable events.</span>
+                     Eventspark makes you find your next core memory by giving you
+                    <span> Unforgettable Events.</span>
                 </h2>
 
                 <div className="features">
