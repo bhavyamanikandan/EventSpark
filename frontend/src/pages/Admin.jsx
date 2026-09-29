@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
-const API_URL = "http://localhost:5000";
+const API_URL = "https://eventspark-backend-5gjz.onrender.com";
+
 
 function Admin() {
 
