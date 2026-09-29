@@ -1,3 +1,4 @@
 node_modules/
 .env
 dist/
+eventspark_backup.sql

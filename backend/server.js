@@ -1208,15 +1208,16 @@ app.put("/api/bookings/:id/cancel", async (req, res) => {
 
 if (require.main === module) {
 
-    app.listen(5000, () => {
+    const PORT = process.env.PORT || 5000;
+
+    app.listen(PORT, () => {
 
         console.log(
-            "EventSpark backend running on http://localhost:5000"
+            `EventSpark backend running on port ${PORT}`
         );
 
     });
 
 }
-
 
 module.exports = app;
